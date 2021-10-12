@@ -1,0 +1,6 @@
+.nextflow*
+work
+data
+model
+results
+*.swp
