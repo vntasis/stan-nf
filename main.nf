@@ -18,14 +18,16 @@ params.data               = "$launchDir/data/*.json"
 params.dataExportScript   = null
 params.model              = "$launchDir/model/*.stan"
 params.outdir             = "$launchDir/results"
-params.cmdStanHome       = "/root/.cmdstanr/cmdstan-2.28.0"
+params.cmdStanHome        = "/root/.cmdstanr/cmdstan-2.28.0"
 params.steps              = 'build-model,sample,diagnose'
 params.multithreading     = false
 params.threads            = 2
 params.chains             = 1
 params.seed               = 1234
+params.numSamples         = 1000
+params.numWarmup          = 1000
 params.buildModelParams   = ''
-params.sampleParams       = ''
+params.sampleParams       = 'adapt delta=0.8 algorithm=hmc engine=nuts max_depth=10'
 params.genQuanParmas      = ''
 params.diagnoseParams     = ''
 params.summaryParams      = ''
@@ -142,6 +144,8 @@ process sampling {
   tuple val(sampleID), path(data), val(modelName), path(model), val(chain) from model2sample_ch
   val(sampleParams) from params.sampleParams
   val(seed) from params.seed
+  val(numSamples) from params.numSamples
+  val(numWarmup) from params.numWarmup
   val(threads) from threads
 
   output:
@@ -153,10 +157,13 @@ process sampling {
 
   script:
   """
-  ./$model sample random seed=$seed \
+  ./$model sample \
+    num_samples=$numSamples \
+    num_warmup=$numWarmup \
+    $sampleParams \
+    random seed=$seed \
     data file=$data \
     output file="${sampleID}_${modelName}_${chain}.csv" \
-    $sampleParams \
     $threads
   """
 }
