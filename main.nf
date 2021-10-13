@@ -229,10 +229,11 @@ process generating_quantities {
   """
   for chain in {1..$chains}
   do
-    ./$model random seed=$seed generate_quantities \
+    ./$model generate_quantities \
       fitted_params="${sampleID}_${modelName}_\${chain}.csv" \
       data file=$data \
-      output file=generated_quantities_${modelName}_${sampleID}_\${chain}.csv
+      output file=generated_quantities_${modelName}_${sampleID}_\${chain}.csv \
+      random seed=$seed
   done
   """
 }
