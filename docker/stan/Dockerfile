@@ -16,5 +16,11 @@ RUN r -e 'install.packages("remotes"); \
 
 RUN r -e 'cmdstanr::install_cmdstan()'
 
+# Create a docker user and set home as the working directory
+RUN useradd -ms /bin/bash docker && \
+	mv /root/.cmdstanr/cmdstan-2.28.0/ /home/docker
+WORKDIR /home/docker
+USER docker
+
 # Run Bash shell
 CMD ["/bin/bash"]
