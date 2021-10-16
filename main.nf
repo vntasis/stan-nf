@@ -55,6 +55,37 @@ if (!outdir.exists()) outdir.mkdir()
 /*
  * Print Initial message
  */
+log.info ""
+log.info "Stan-NF PIPELINE"
+log.info "================"
+log.info "Input Data:                               ${params.data}"
+log.info "Ouput directory:                          ${params.outdir}"
+log.info "Steps:                                    ${params.steps}"
+log.info "Model file(s):                            ${params.model}"
+log.info "Stan home directory:                      ${params.cmdStanHome}"
+log.info "Seed:                                     ${params.seed}"
+log.info "Number of chains:                         ${params.chains}"
+if (runBuildModel) {
+  log.info "Extra parameters for Building the model:  ${params.buildModelParams}"
+}
+if (runSample) {
+  log.info "Number of samples for Output:             ${params.numSamples}"
+  log.info "Number of samples for Warmup:             ${params.numWarmup}"
+  log.info "Extra parameters for Sampling:            ${params.sampleParams}"
+}
+if (runDiagnose) {
+  log.info "Extra parameters for Diagnose:            ${params.diagnoseParams}"
+  log.info "Extra parameters for Summary:             ${params.summaryParams}"
+}
+if (runGenQuan && !(runSample)) {
+  log.info "Fitted parameters file(s):                ${params.fittedParams}"
+}
+if (params.multithreading) {
+  log.info "Multithreading:                           ${params.multithreading}"
+  log.info "Number of threads:                        ${params.threads}"
+}
+log.info ""
+
 
 /*
  * Declare channels
