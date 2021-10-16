@@ -16,8 +16,9 @@ https://github.com/vntasis/stan-nf
 
 params.data               = "$launchDir/data/*.json"
 params.dataExportScript   = null
-params.model              = "$launchDir/model/*.stan"
+params.model              = "$launchDir/models/*.stan"
 params.outdir             = "$launchDir/results"
+params.fittedParams      = ''
 params.cmdStanHome        = "/home/docker/cmdstan-2.28.0"
 params.steps              = 'build-model,sample,diagnose'
 params.multithreading     = false
@@ -28,9 +29,8 @@ params.numSamples         = 1000
 params.numWarmup          = 1000
 params.buildModelParams   = ''
 params.sampleParams       = 'adapt delta=0.8 algorithm=hmc engine=nuts max_depth=10'
-params.genQuanParmas      = ''
 params.diagnoseParams     = ''
-params.summaryParams      = ''
+params.summaryParams      = '-s 3'
 params.help               = ''
 
 // Other variables
@@ -62,6 +62,9 @@ if (!outdir.exists()) outdir.mkdir()
 Channel.empty().into {
   model2build_ch;
   model2sample_ch;
+  model_ch;
+  model2gen_quan_ch;
+  gen_quan_ch;
 }
 
 Channel
@@ -90,7 +93,28 @@ if (runBuildModel) {
     .combine(chains_ch)
     .set{ model2sample_ch }
 
+}else if (runGenQuan) {
+
+  Channel
+    .fromPath(params.model, checkIfExists: true)
+    .map{ [ it.simpleName, it ] }
+    .set{ model_ch }
+
+  Channel
+    .fromPath(params.data, checkIfExists: true)
+    .map{ [ it.simpleName, it ] }
+    .combine(model_ch)
+    .set{ model2gen_quan_ch }
+
+  Channel
+    .fromPath(params.fittedParams, checkIfExists: true)
+    .collect()
+    .map{ [ it ] }
+    .combine(model2gen_quan_ch)
+    .map{ [ it[3], it[1], it[4], it[2], it[0] ] }
+    .set{ gen_quan_ch }
 }
+
 
 
 /*
@@ -98,10 +122,10 @@ if (runBuildModel) {
  */
 
 
-
 // Build the binary of the model
 process buildingModel {
   tag "$modelName"
+  publishDir "$params.outdir/models", mode: 'copy'
 
   input:
   tuple val(modelName), path(modelFile) from model2build_ch
@@ -204,10 +228,12 @@ process summarising {
 
 
 //Generate quantities process
-samples2gen_quan_ch
-  .groupTuple(by: [0,1])
-  .map { [ it[0], it[1], it[2][1], it[3][1], it[4] ] }
-  .set{ gen_quan_ch }
+if (runSample) {
+  samples2gen_quan_ch
+    .groupTuple(by: [0,1])
+    .map { [ it[0], it[1], it[2][1], it[3][1], it[4] ] }
+    .set{ gen_quan_ch }
+}
 
 process generating_quantities {
   tag "$modelName-$sampleID"
@@ -215,9 +241,9 @@ process generating_quantities {
 
   input:
   tuple val(modelName), val(sampleID), path(model), path(data), path("*") from gen_quan_ch
-  val(genQuanParmas) from params.genQuanParmas
   val(chains) from params.chains
   val(seed) from params.seed
+  val(threads) from threads
 
   output:
   file("generated_quantities_${modelName}_${sampleID}_*.csv")
@@ -233,7 +259,8 @@ process generating_quantities {
       fitted_params="${sampleID}_${modelName}_\${chain}.csv" \
       data file=$data \
       output file=generated_quantities_${modelName}_${sampleID}_\${chain}.csv \
-      random seed=$seed
+      random seed=$seed \
+      $threads
   done
   """
 }

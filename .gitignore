@@ -1,6 +1,6 @@
 .nextflow*
 work
 data
-model
+models
 results
 *.swp
