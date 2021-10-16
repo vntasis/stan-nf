@@ -29,7 +29,6 @@ params.numSamples         = 1000
 params.numWarmup          = 1000
 params.buildModelParams   = ''
 params.sampleParams       = 'adapt delta=0.8 algorithm=hmc engine=nuts max_depth=10'
-params.genQuanParmas      = ''
 params.diagnoseParams     = ''
 params.summaryParams      = ''
 params.help               = ''
@@ -242,9 +241,9 @@ process generating_quantities {
 
   input:
   tuple val(modelName), val(sampleID), path(model), path(data), path("*") from gen_quan_ch
-  val(genQuanParmas) from params.genQuanParmas
   val(chains) from params.chains
   val(seed) from params.seed
+  val(threads) from threads
 
   output:
   file("generated_quantities_${modelName}_${sampleID}_*.csv")
@@ -260,7 +259,8 @@ process generating_quantities {
       fitted_params="${sampleID}_${modelName}_\${chain}.csv" \
       data file=$data \
       output file=generated_quantities_${modelName}_${sampleID}_\${chain}.csv \
-      random seed=$seed
+      random seed=$seed \
+      $threads
   done
   """
 }
