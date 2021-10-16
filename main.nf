@@ -30,7 +30,7 @@ params.numWarmup          = 1000
 params.buildModelParams   = ''
 params.sampleParams       = 'adapt delta=0.8 algorithm=hmc engine=nuts max_depth=10'
 params.diagnoseParams     = ''
-params.summaryParams      = ''
+params.summaryParams      = '-s 3'
 params.help               = ''
 
 // Other variables
