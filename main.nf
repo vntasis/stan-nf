@@ -16,7 +16,7 @@ https://github.com/vntasis/stan-nf
 
 params.data               = "$launchDir/data/*.json"
 params.dataExportScript   = null
-params.model              = "$launchDir/model/*.stan"
+params.model              = "$launchDir/models/*.stan"
 params.outdir             = "$launchDir/results"
 params.fittedParams      = ''
 params.cmdStanHome        = "/home/docker/cmdstan-2.28.0"
