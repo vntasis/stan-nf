@@ -18,7 +18,7 @@ params.data               = "$launchDir/data/*.json"
 params.dataExportScript   = null
 params.model              = "$launchDir/models/*.stan"
 params.outdir             = "$launchDir/results"
-params.fittedParams      = ''
+params.fittedParams       = ''
 params.cmdStanHome        = "/home/docker/cmdstan-2.28.0"
 params.steps              = 'build-model,sample,diagnose'
 params.multithreading     = false
@@ -31,7 +31,7 @@ params.buildModelParams   = ''
 params.sampleParams       = 'adapt delta=0.8 algorithm=hmc engine=nuts max_depth=10'
 params.diagnoseParams     = ''
 params.summaryParams      = '-s 3'
-params.help               = ''
+params.help               = false
 
 // Other variables
 multithreadParam = params.multithreading ? 'STAN_THREADS=true' : ''
@@ -51,6 +51,66 @@ if (!outdir.exists()) outdir.mkdir()
 /*
  * Help message
  */
+if (params.help) {
+  log.info"""
+  Stan-NF PIPELINE
+  ================
+  Stan-NF will produce samples from a posterior using CmdStan,
+  given one or more models and some data. For more information
+  check out documentation at https://github.com/vntasis/stan-nf
+
+  Current CmdStan version utilized: 2.28.0
+  Note: Users are highly advised to read the documentation of CmdStan
+        (https://mc-stan.org/users/interfaces/cmdstan)
+
+  Usage:
+    nextflow run vntasis/stan-nf --data DATA_PATH --outdir OUTPUT_PATH
+
+  Options:
+    Mandatory
+      --data DATA_PATH              Input data for the model (Default: './data/*.json')
+      --outdir OUTPUT_PATH          Output directory where all the results are going to be saved (Default: './results')
+      --steps STEPS_STR             Comma-separated Character string declaring the steps of the pipeline to be
+                                    implemented (Default: 'build-model,sample,diagnose'
+      --model MODEL_PATH            File(s) describing the stan model(s) of interest (Default: './models/*.stan')
+      --chains CHAIN_NUMBER         Number of chains. It will be used for sampling, and for standalone generating
+                                    quantities (Default: 1)
+      --seed  SEED                  Number to be used as a seed for sampling and generating quantities (Default: 1234)
+      --cmdStanHome STAN_HOME_PATH  Path of the CmdStan home directory containing Stan executables
+                                    (Default (for use with docker): '/home/docker/cmdstan-2.28.0')
+
+    Building-Model
+      --buildModelParams PARAM_STR  String containing parameters to be concatenated on the command that builds the model
+                                    (Default: '')
+
+    Sampling
+      --numSamples SAMPLES_NUMBER   Number of samples to be drawn from the posterior (Default: 1000)
+      --numWarmup WARMUP_NUMBER     Number of samples to be used for the Warmup phase (Default: 1000)
+      --sampleParams PARAM_STR      String containing parameters to be concatenated on the command that performs the
+                                    sampling (Default: 'adapt delta=0.8 algorithm=hmc engine=nuts max_depth=10')
+
+    Generating-Quantities
+      --fittedParams SAMPLES_PATH   CSV files containing Samples drawn from a posterior. They will be used for
+                                    standalone generating quantities of interest from a model, when samples have already
+                                    been drawn (Default: '')
+
+    Running-Diagnostics
+      --diagnoseParams PARAM_STR    String containing parameters to be concatenated on the command that will run the
+                                    diagnostics (Default: '')
+      --summaryParams PARAM_STR     String containing parameters to be concatenated on the command that will summarise
+                                    the posterior samples (Default: '-s 3')
+    Other
+      --multithreading              Option for multithreaded models. This will add the right flags during the
+                                    compilation of the model (Default: false)
+      --threads THREAD_NUMBER       Number of threads to be used for sampling and generating quantities in case of
+                                    multithreaded models (Default: 2)
+      --help                        Print this help message and exit
+
+  """
+  .stripIndent()
+
+  exit 0
+}
 
 /*
  * Print Initial message
