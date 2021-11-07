@@ -14,7 +14,7 @@ RUN r -e 'install.packages("remotes"); \
 	remotes::install_github("stan-dev/posterior"); \
 	install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))'
 
-RUN r -e 'cmdstanr::install_cmdstan()'
+RUN r -e 'cmdstanr::install_cmdstan(version = "2.28.0")'
 
 # Create a docker user and set home as the working directory
 RUN useradd -ms /bin/bash docker && \
