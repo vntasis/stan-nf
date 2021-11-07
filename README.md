@@ -14,12 +14,39 @@ Stan-NF uses [Nextflow](http://www.nextflow.io) as the execution backend. It ens
 
 The user may provide multiple Stan models and/or datasets. Stan-NF will execute different processes in parallel to compile the different models, and then sample from the posteriors of those models based on every different dataset. So, the number of output files depends on `M x D`, where `M` is the number of model files provided and `D` the number of data files provided.
 
+
 ## Requirements
+
+- Unix-like operationg system (Linux, MacOS, etc)
+- Nextflow (Stan-NF was created and tested with nextflow version 20.10.0.5430)
+- [Docker](https://www.docker.com/) or [Singularity](http://singularity.lbl.gov) engine
+
 ## Pipeline summary
+
+1. Compile Stan model(s) into executable(s)
+2. Run MCMC in order to sample from the posterior distribution
+3. Summarize the results per sample (and per model)
+4. Calculate basic diagnostic metrics for the MCMC run(s)
+5. Standalone generate quantities of interest from a fitted model
+
 ## Quickstart
+
+1. Install Nextflow by using the following command:
+
+    ```
+    curl -s https://get.nextflow.io | bash
+    ```
+
+2. Fetch the pipeline and print help information about it:
+
+    ```
+    ./nextflow run vntasis/stan-nf --help
+ l   ```
 ## Pipeline parameters
 ## Pipeline input
 ## Pipeline output
 ## Running the pipeline
+
 ## Stan version
-## License
+
+Current CmdStan version built inside the docker image 2.28.0
