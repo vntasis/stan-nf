@@ -4,7 +4,6 @@ LABEL maintainer "Vasilis F. Ntasis <vasilis.ntasis@crg.eu>" \
         description "Docker image for statistical analysis with Stan - slim version"
 
 # Update the system and install
-# ps required for tracing functionality of nextflow
 RUN apt-get update -qq \
 	&& apt-get clean
 
@@ -24,7 +23,7 @@ RUN apt-get update -qq \
 
 # Create a docker user and set home as the working directory
 RUN useradd -ms /bin/bash docker
-COPY --from=builder /root/.cmdstanr/cmdstan-2.28.0/ /home/docker
+COPY --from=builder /root/.cmdstanr/cmdstan-2.28.0/ /home/docker/cmdstan-2.28.0/
 WORKDIR /home/docker
 USER docker
 
