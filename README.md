@@ -41,7 +41,8 @@ The user may provide multiple Stan models and/or datasets. Stan-NF will execute 
 
     ```
     ./nextflow run vntasis/stan-nf --help
- l   ```
+    ```
+
 ## Pipeline parameters
 ## Pipeline input
 ## Pipeline output
@@ -49,4 +50,4 @@ The user may provide multiple Stan models and/or datasets. Stan-NF will execute 
 
 ## Stan version
 
-Current CmdStan version built inside the docker image 2.28.0
+The current CmdStan version built inside the docker image is 2.28.0
