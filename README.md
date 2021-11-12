@@ -1,8 +1,10 @@
 # Stan-NF
 
-A nextflow pipeline for performing statistical analysis with Stan. 
+### A nextflow pipeline for performing statistical analysis with Stan.
 
-## Introduction
+[Introduction](#intro) | [Requirements](#requir) | [Pipeline summary](#summary) | [Quickstart](#quick) | [Pipeline parameters](#params) | [Pipeline Input](#in) | [Pipeline Output](#out) | [Running the pipeline](#run)
+
+## Introduction<a name="intro"></a>
 
 Stan-NF is using CmdStan to draw samples from a posterior.
 
@@ -15,13 +17,13 @@ Stan-NF uses [Nextflow](http://www.nextflow.io) as the execution backend. It ens
 The user may provide multiple Stan models and/or datasets. Stan-NF will execute different processes in parallel to compile the different models, and then sample from the posteriors of those models based on every different dataset. So, the number of output files depends on `M x D`, where `M` is the number of model files provided and `D` the number of data files provided.
 
 
-## Requirements
+## Requirements<a name="requir"></a>
 
 - Unix-like operationg system (Linux, MacOS, etc)
 - Nextflow (Stan-NF was created and tested with nextflow version 20.10.0.5430)
 - [Docker](https://www.docker.com/) or [Singularity](http://singularity.lbl.gov) engine
 
-## Pipeline summary
+## Pipeline summary<a name="summary"></a>
 
 1. Compile Stan model(s) into executable(s)
 2. Run MCMC in order to sample from the posterior distribution
@@ -29,7 +31,7 @@ The user may provide multiple Stan models and/or datasets. Stan-NF will execute 
 4. Calculate basic diagnostic metrics for the MCMC run(s)
 5. Standalone generate quantities of interest from a fitted model
 
-## Quickstart
+## Quickstart<a name="quick"></a>
 
 1. Install Nextflow by using the following command:
 
@@ -43,7 +45,7 @@ The user may provide multiple Stan models and/or datasets. Stan-NF will execute 
     ./nextflow run vntasis/stan-nf --help
     ```
 
-## Pipeline parameters
+## Pipeline parameters<a name="params"></a>
 
 ### General
 
@@ -125,9 +127,9 @@ The following parameters are required for every run of the pipeline, but all of 
 `--help`
 - Print help message and exit
 
-## Pipeline input
-## Pipeline output
-## Running the pipeline
+## Pipeline input<a name="in"></a>
+## Pipeline output<a name="out"></a>
+## Running the pipeline<a name="run"></a>
 
 ## Stan version
 
