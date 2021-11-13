@@ -84,7 +84,7 @@ if (params.help) {
     nextflow run vntasis/stan-nf --data DATA_PATH --outdir OUTPUT_PATH
 
   Options:
-    Mandatory
+    General
       --data DATA_PATH              Input data for the model (Default: './data/*.json')
       --outdir OUTPUT_PATH          Output directory where all the results are going to be saved (Default: './results')
       --steps STEPS_STR             Comma-separated Character string declaring the steps of the pipeline to be
@@ -110,6 +110,8 @@ if (params.help) {
       --fittedParams SAMPLES_PATH   CSV files containing Samples drawn from a posterior. They will be used for
                                     standalone generating quantities of interest from a model, when samples have already
                                     been drawn (Default: '')
+      --seedToGenQuan               By default, generating quantities is run without a seed. This option will
+                                    pass the provided seed to generating quantities (Default: false)
 
     Summarize-output
       --summaryParams PARAM_STR     String containing parameters to be concatenated on the command that will summarise
@@ -133,16 +135,16 @@ if (params.help) {
 log.info ""
 log.info "Stan-NF PIPELINE"
 log.info "================"
-log.info "Input Data:                               ${params.data}"
-log.info "Ouput directory:                          ${params.outdir}"
 log.info "Steps:                                    ${params.steps}"
+log.info "Ouput directory:                          ${params.outdir}"
 log.info "Model file(s):                            ${params.model}"
 log.info "Stan home directory:                      ${params.cmdStanHome}"
-log.info "Number of chains:                         ${params.chains}"
 if (runBuildModel) {
   log.info "Extra parameters for Building the model:  ${params.buildModelParams}"
 }
 if (runSample) {
+  log.info "Input Data:                               ${params.data}"
+  log.info "Number of chains:                         ${params.chains}"
   log.info "Number of samples for Output:             ${params.numSamples}"
   log.info "Number of samples for Warmup:             ${params.numWarmup}"
   log.info "Extra parameters for Sampling:            ${params.sampleParams}"
@@ -152,6 +154,8 @@ if (runDiagnose) {
   log.info "Extra parameters for Summary:             ${params.summaryParams}"
 }
 if (runGenQuan && !(runSample)) {
+  log.info "Input Data:                               ${params.data}"
+  log.info "Number of chains:                         ${params.chains}"
   log.info "Fitted parameters file(s):                ${params.fittedParams}"
   if (params.seedToGenQuan) log.info "Seed:                                     ${params.seed}"
 }
