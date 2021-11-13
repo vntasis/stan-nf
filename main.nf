@@ -34,6 +34,7 @@ params.multithreading     = false
 params.threads            = 2
 params.chains             = 1
 params.seed               = 1234
+params.seedToGenQuan      = false
 params.numSamples         = 1000
 params.numWarmup          = 1000
 params.buildModelParams   = ''
@@ -45,6 +46,7 @@ params.help               = false
 // Other variables
 multithreadParam = params.multithreading ? 'STAN_THREADS=true' : ''
 threads = params.multithreading ? "num_threads=$params.threads" : ''
+seed2genquan = params.seedToGenQuan ? "random seed=$params.seed" : ''
 
 Steps          = params.steps.split(',').collect { it.trim() }
 runBuildModel  = 'build-model' in Steps
@@ -132,7 +134,6 @@ log.info "Ouput directory:                          ${params.outdir}"
 log.info "Steps:                                    ${params.steps}"
 log.info "Model file(s):                            ${params.model}"
 log.info "Stan home directory:                      ${params.cmdStanHome}"
-log.info "Seed:                                     ${params.seed}"
 log.info "Number of chains:                         ${params.chains}"
 if (runBuildModel) {
   log.info "Extra parameters for Building the model:  ${params.buildModelParams}"
@@ -141,6 +142,7 @@ if (runSample) {
   log.info "Number of samples for Output:             ${params.numSamples}"
   log.info "Number of samples for Warmup:             ${params.numWarmup}"
   log.info "Extra parameters for Sampling:            ${params.sampleParams}"
+  log.info "Seed:                                     ${params.seed}"
 }
 if (runDiagnose) {
   log.info "Extra parameters for Diagnose:            ${params.diagnoseParams}"
@@ -148,6 +150,7 @@ if (runDiagnose) {
 }
 if (runGenQuan && !(runSample)) {
   log.info "Fitted parameters file(s):                ${params.fittedParams}"
+  if (params.seedToGenQuan) log.info "Seed:                                     ${params.seed}"
 }
 if (params.multithreading) {
   log.info "Multithreading:                           ${params.multithreading}"
@@ -342,7 +345,7 @@ process generating_quantities {
   input:
   tuple val(modelName), val(sampleID), path(model), path(data), path("*") from gen_quan_ch
   val(chains) from params.chains
-  val(seed) from params.seed
+  val(seed) from seed2genquan
   val(threads) from threads
 
   output:
@@ -359,7 +362,7 @@ process generating_quantities {
       fitted_params="${sampleID}_${modelName}_\${chain}.csv" \
       data file=$data \
       output file=generated_quantities_${modelName}_${sampleID}_\${chain}.csv \
-      random seed=$seed \
+      $seed \
       $threads
   done
   """
