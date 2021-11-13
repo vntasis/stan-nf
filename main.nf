@@ -285,7 +285,7 @@ process sampling {
     num_samples=$numSamples \
     num_warmup=$numWarmup \
     $sampleParams \
-    random seed=$seed \
+    random seed=$seed id=$chain \
     data file=$data \
     output file="${sampleID}_${modelName}_${chain}.csv" \
     $threads
