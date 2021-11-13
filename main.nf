@@ -250,7 +250,7 @@ process buildingModel {
 
 
 // Use the model to sample
-if (runBuildModel) {
+if (runBuildModel && runSample) {
   Channel
     .fromPath(params.data, checkIfExists: true)
     .map{ [ it.simpleName, it ] }
