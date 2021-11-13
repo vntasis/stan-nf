@@ -39,7 +39,6 @@ params.numSamples         = 1000
 params.numWarmup          = 1000
 params.buildModelParams   = ''
 params.sampleParams       = 'adapt delta=0.8 algorithm=hmc engine=nuts max_depth=10'
-params.diagnoseParams     = ''
 params.summaryParams      = '-s 3'
 params.help               = false
 
@@ -82,7 +81,7 @@ if (params.help) {
       --data DATA_PATH              Input data for the model (Default: './data/*.json')
       --outdir OUTPUT_PATH          Output directory where all the results are going to be saved (Default: './results')
       --steps STEPS_STR             Comma-separated Character string declaring the steps of the pipeline to be
-                                    implemented (Default: 'build-model,sample,diagnose'
+                                    implemented (Default: 'build-model,sample,diagnose')
       --model MODEL_PATH            File(s) describing the stan model(s) of interest (Default: './models/*.stan')
       --chains CHAIN_NUMBER         Number of chains. It will be used for sampling, and for standalone generating
                                     quantities (Default: 1)
@@ -105,9 +104,7 @@ if (params.help) {
                                     standalone generating quantities of interest from a model, when samples have already
                                     been drawn (Default: '')
 
-    Running-Diagnostics
-      --diagnoseParams PARAM_STR    String containing parameters to be concatenated on the command that will run the
-                                    diagnostics (Default: '')
+    Summarize-output
       --summaryParams PARAM_STR     String containing parameters to be concatenated on the command that will summarise
                                     the posterior samples (Default: '-s 3')
     Other
@@ -145,7 +142,6 @@ if (runSample) {
   log.info "Seed:                                     ${params.seed}"
 }
 if (runDiagnose) {
-  log.info "Extra parameters for Diagnose:            ${params.diagnoseParams}"
   log.info "Extra parameters for Summary:             ${params.summaryParams}"
 }
 if (runGenQuan && !(runSample)) {
@@ -309,7 +305,6 @@ process summarising {
   input:
   tuple val(modelName), val(sampleID), path("*") from summarise_ch
   val stan from params.cmdStanHome
-  val(diagnoseParams) from params.diagnoseParams
   val(summaryParams) from params.summaryParams
 
   output:
@@ -323,7 +318,7 @@ process summarising {
   """
   $stan/bin/stansummary $summaryParams *.csv \
     > "summary_${modelName}_${sampleID}.txt" && \
-    $stan/bin/diagnose $diagnoseParams *.csv \
+    $stan/bin/diagnose *.csv \
     > "diagnostics_${modelName}_${sampleID}.txt"
   """
 }
