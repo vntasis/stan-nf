@@ -8,11 +8,11 @@
 
 Stan-NF is using CmdStan to draw samples from a posterior.
 
-[Stan](https://mc-stan.org/) is a state-of-the-art platform for statistical modeling and high-performance statistical computation. It uses Markov chain Monte Carlo (MCMC) sampling, in order to get full Bayesian statistical inference. For more information check Stan's [documentation](https://mc-stan.org/user/documentation/).
+[Stan](https://mc-stan.org/) is a state-of-the-art platform for statistical modeling and high-performance statistical computation. It uses Markov chain Monte Carlo (MCMC) sampling, in order to get full Bayesian statistical inference. For more information check Stan's [documentation](https://mc-stan.org/users/documentation/).
 
 [CmdStan](https://mc-stan.org/users/interfaces/cmdstan) is the command-line interface to Stan. It taskes as input a statistical model written in Stan probabilistic programming language and compiles it to a C++ executable, which can then be used to draw samples from the posterior. It also offers tools for generating quantities of interest from an existing estimate, as well as evaluating and summarizing the produced outputs.
 
-Stan-NF uses [Nextflow](http://www.nextflow.io) as the execution backend. It ensures scalability and automation. It makes trivial the deployment of a pipeline in a high performance computing or cloud environment. Please check [Nextflow documentation](http://www.nextflow.io/docs/latest/index.html) for more information. 
+Stan-NF uses [Nextflow](https://www.nextflow.io) as the execution backend. It ensures scalability and automation. It makes trivial the deployment of a pipeline in a high performance computing or cloud environment. Please check [Nextflow documentation](https://www.nextflow.io/docs/latest/index.html) for more information. 
 
 The user may provide multiple Stan models and/or datasets. Stan-NF will execute different processes in parallel to compile the different models, and then sample from the posteriors of those models based on every different dataset. So, the number of output files depends on `M x D`, where `M` is the number of model files provided and `D` the number of data files provided.
 
@@ -21,7 +21,7 @@ The user may provide multiple Stan models and/or datasets. Stan-NF will execute 
 
 - Unix-like operationg system (Linux, MacOS, etc)
 - Nextflow (Stan-NF was created and tested with nextflow version 20.10.0.5430)
-- [Docker](https://www.docker.com/) or [Singularity](http://singularity.lbl.gov) engine
+- [Docker](https://www.docker.com/) or [Singularity](https://singularity.hpcng.org/) engine
 
 ## Pipeline summary<a name="summary"></a>
 
@@ -53,7 +53,7 @@ The following parameters are required for every run of the pipeline, but all of 
 
 `--data DATA_PATH`
 - Input data file(s) for the model in json format. By defualt, Stan-NF will look for json files inside a directory named `data` located in the current working directory (Default: './data/*.json').
-- Note: The content of the json file has to match the structure of the data as declared in the `data` section of the provided stan model. For more information, check CmdStan's documentation on [JSON Format for CmdStan](https://mc-stan.org/docs/2_28/cmdstan-guide/json.html).
+
 
 `--outdir OUTPUT_PATH`
 - Output directory where all the results are going to be saved. By default, output is saved in a directory with the name `results` located in the current working directory (Default: './results').
@@ -115,6 +115,9 @@ The following parameters are required for every run of the pipeline, but all of 
 - CSV file(s) containing samples drawn from a posterior. They will be used for standalone generating quantities of interest from a model, when a model has already been fitted (Default: '').
 - For more information, please check CmdStan's documentation on [Standalone Generate Quantities](https://mc-stan.org/docs/2_28/cmdstan-guide/standalone-generate-quantities.html).
 
+`--seedToGenQuan`
+- By default, generating quantities is run without a seed. This option will pass the provided seed (using `--seed`) to generating quantities (Default: false)
+
 
 ### Other
 `--multithreading`
@@ -128,6 +131,10 @@ The following parameters are required for every run of the pipeline, but all of 
 - Print help message and exit
 
 ## Pipeline input<a name="in"></a>
+In order to sample from a posterior, the user needs to provide:
+- One or more model files or model executables. Models need to be written in Stan probabilistic language. For more details on that see Stan's [documentation](https://mc-stan.org/users/documentation/). Executable models that have already been compiled may also be provided instead.
+- One or more Input data to model. Data files should be in json format. The content of the json file has to match the structure of the data as declared in the `data` section of the provided stan model. For more information, check CmdStan's documentation on [JSON Format for CmdStan](https://mc-stan.org/docs/2_28/cmdstan-guide/json.html).
+
 ## Pipeline output<a name="out"></a>
 ## Running the pipeline<a name="run"></a>
 
