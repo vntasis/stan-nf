@@ -18,7 +18,8 @@ RUN r -e 'cmdstanr::install_cmdstan(version = "2.28.0")'
 
 # Create a docker user and set home as the working directory
 RUN useradd -ms /bin/bash docker && \
-	mv /root/.cmdstanr/cmdstan-2.28.0/ /home/docker
+	mv /root/.cmdstanr/cmdstan-2.28.0/ /home/docker && \
+	chown -R docker:docker /home/docker/cmdstan-2.28.0/
 WORKDIR /home/docker
 USER docker
 
