@@ -63,11 +63,5 @@ jobs:
         sudo mv nextflow /usr/local/bin/
 
     - name: Run pipeline with test data
-      env:
-        parameters: --steps 'build-model,sample,diagnose,generate-quantities' \
-                    --chains 2 \
-                    --model 'examples/models/*.stan' \
-                    --data 'examples/data/*.json' \
-                    --numSamples 2000
       run: |
-        nextflow run ${GITHUB_WORKSPACE} $parameters
+        nextflow run ${GITHUB_WORKSPACE} -profile test
