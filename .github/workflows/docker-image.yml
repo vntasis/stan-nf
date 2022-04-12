@@ -50,6 +50,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Pull the docker image
+      run: |
+        docker pull vntasis/stan:${{ github.ref_name }}
+        docker tag vntasis/stan:${{ github.ref_name }} vntasis/stan:latest
+
     - name: Install Nextflow
       env:
         NXF_VER: ${{ matrix.NXF_VER }}
