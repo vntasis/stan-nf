@@ -12,7 +12,7 @@ Stan-NF is using CmdStan to draw samples from a posterior.
 
 [CmdStan](https://mc-stan.org/users/interfaces/cmdstan) is the command-line interface to Stan. It taskes as input a statistical model written in Stan probabilistic programming language and compiles it to a C++ executable, which can then be used to draw samples from the posterior. It also offers tools for generating quantities of interest from an existing estimate, as well as evaluating and summarizing the produced outputs.
 
-Stan-NF uses [Nextflow](https://www.nextflow.io) as the execution backend. It ensures scalability and automation. It makes trivial the deployment of a pipeline in a high performance computing or cloud environment. Please check [Nextflow documentation](https://www.nextflow.io/docs/latest/index.html) for more information. 
+Stan-NF uses [Nextflow](https://www.nextflow.io) as the execution backend. It ensures scalability and automation. It makes trivial the deployment of a pipeline in a high performance computing or cloud environment. Please check [Nextflow documentation](https://www.nextflow.io/docs/latest/index.html) for more information.
 
 The user may provide multiple Stan models and/or datasets. Stan-NF will execute different processes in parallel to compile the different models, and then sample from the posteriors of those models based on every different dataset. So, the number of output files depends on `M x D`, where `M` is the number of model files provided and `D` the number of data files provided.
 
@@ -61,7 +61,7 @@ The following parameters are required for every run of the pipeline, but all of 
 
 `--steps STEPS_STR`
 - Comma-separated character string declaring the steps of the pipeline to run (Default: 'build-model,sample,diagnose').
-- Possible steps: 
+- Possible steps:
   * `build-model`: Compile Stan model(s) into executable(s)
   * `sample` : Run MCMC in order to sample from the posterior distribution
   * `diagnose`: Summarize results and calculate basic diagnostic metrics
@@ -70,7 +70,7 @@ The following parameters are required for every run of the pipeline, but all of 
 
 `--model MODEL_PATH`
 - File(s) describing a model in Stan probabilistic language, or
-- Model executable(s) that has already been generated. In this case the `build-model` step should be omitted. 
+- Model executable(s) that has already been generated. In this case the `build-model` step should be omitted.
 - By default, Stan-NF will look for model files in a directory named `model` located in the current working directory (Default: './models/*.stan').
 
 `--chains CHAIN_NUMBER`
@@ -141,7 +141,7 @@ For standalone generating quantities of interest, the user needs to provide:
 - For more information, please check CmdStan's documentation on [Standalone Generate Quantities](https://mc-stan.org/docs/2_28/cmdstan-guide/standalone-generate-quantities.html).
 
 ## Pipeline output<a name="out"></a>
-By default, output is saved in a directory with the name `results` located in the current working directory. 
+By default, output is saved in a directory with the name `results` located in the current working directory.
 
 Stan-NF is going to extract the dataset name from the name of the input json file and use it to create a directory for the results specific to this dataset inside the `results` directory. For instance, if the input is `sample1.json` and `sample2.json`, `results/sample1` and `results/sample2` directories are going to be created by the pipeline.
 
@@ -165,7 +165,7 @@ This would compile every model file inside the `models/` directory and use every
 
 The first time Stan-NF is used with the default configuration, it is going to take some more time, in order to download the required docker image.
 
-In another usage scenario, the user may has already generated samples from the posterior and wishes to generate some quantities of interest (e.g. log-likelihood). In that case, the user needs to write a new model file (e.g. 'model_genquan.stan') that will include a `generated quantities` section with the required code. 
+In another usage scenario, the user may has already generated samples from the posterior and wishes to generate some quantities of interest (e.g. log-likelihood). In that case, the user needs to write a new model file (e.g. 'model_genquan.stan') that will include a `generated quantities` section with the required code.
 
 First, the user needs to compile the new model:
 ```
