@@ -60,6 +60,7 @@ jobs:
         NXF_VER: ${{ matrix.NXF_VER }}
       run: |
         wget -qO- get.nextflow.io | bash
+        sudo mv nextflow /usr/local/bin/
 
     - name: Run pipeline with test data
       env:
@@ -69,5 +70,5 @@ jobs:
                      --data 'examples/data/*json' \
                      --numSamples 2000"
       run: |
-        ./nextflow -v
-        ./nextflow run ${GITHUB_WORKSPACE} $parameters
+        cd ${GITHUB_WORKSPACE}
+        nextflow run main.nf $parameters
