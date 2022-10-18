@@ -22,8 +22,9 @@ USER $MAMBA_USER
 
 # Install necessary tools and pack stan environment
 ARG MAMBA_DOCKERFILE_ACTIVATE=1
+ARG stan_ver
 RUN micromamba install -n base -y -c conda-forge conda-pack && \
-	micromamba create -n stan -c conda-forge cmdstan=2.30.0 && \
+	micromamba create -n stan -c conda-forge cmdstan="$stan_ver" && \
 	conda-pack -p /opt/conda/envs/stan -o /tmp/env.tar && \
 	micromamba remove -p /opt/conda/envs/stan --all -y && \
 	micromamba clean --all --yes && \
