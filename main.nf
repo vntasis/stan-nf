@@ -313,8 +313,8 @@ process summarising {
   val(summaryParams) from params.summaryParams
 
   output:
-  file("summary_${modelName}_${sampleID}.txt")
-  file("diagnostics_${modelName}_${sampleID}.txt")
+  path("summary_${modelName}_${sampleID}.txt")
+  path("diagnostics_${modelName}_${sampleID}.txt")
 
   when:
   runDiagnose
@@ -349,7 +349,7 @@ process generating_quantities {
   val(threads) from threads
 
   output:
-  file("generated_quantities_${modelName}_${sampleID}_*.csv")
+  path("generated_quantities_${modelName}_${sampleID}_*.csv")
 
   when:
   runGenQuan
