@@ -35,7 +35,6 @@ params.dataExportScript   = null
 params.model              = "$launchDir/models/*.stan"
 params.outdir             = "$launchDir/results"
 params.fittedParams       = ''
-params.cmdStanHome        = "/home/docker/cmdstan-2.28.0"
 params.steps              = 'build-model,sample,diagnose'
 params.multithreading     = false
 params.threads            = 2
@@ -94,7 +93,7 @@ if (params.help) {
                                     quantities (Default: 1)
       --seed  SEED                  Number to be used as a seed for sampling and generating quantities (Default: 1234)
       --cmdStanHome STAN_HOME_PATH  Path of the CmdStan home directory containing Stan executables
-                                    (Default (for use with docker): '/home/docker/cmdstan-2.28.0')
+                                    (This option is deprecated)
 
     Building-Model
       --buildModelParams PARAM_STR  String containing parameters to be concatenated on the command that builds the model
@@ -138,7 +137,6 @@ log.info "================"
 log.info "Steps:                                    ${params.steps}"
 log.info "Ouput directory:                          ${params.outdir}"
 log.info "Model file(s):                            ${params.model}"
-log.info "Stan home directory:                      ${params.cmdStanHome}"
 if (runBuildModel) {
   log.info "Extra parameters for Building the model:  ${params.buildModelParams}"
 }
@@ -241,7 +239,6 @@ process buildingModel {
   tuple val(modelName), path(modelFile) from model2build_ch
   val buildParams from params.buildModelParams
   val mthreading from multithreadParam
-  val stan from params.cmdStanHome
 
   output:
   tuple val(modelName), path(modelName) into model_built_ch
@@ -251,9 +248,7 @@ process buildingModel {
 
   script:
   """
-  wdir="\$PWD" && \
-  cd $stan && \
-  make "\$wdir/$modelName" $mthreading $buildParams
+  cmdstan_model $modelFile $mthreading $buildParams
   """
 
 }
@@ -315,7 +310,6 @@ process summarising {
 
   input:
   tuple val(modelName), val(sampleID), path("*") from summarise_ch
-  val stan from params.cmdStanHome
   val(summaryParams) from params.summaryParams
 
   output:
@@ -327,9 +321,9 @@ process summarising {
 
   script:
   """
-  $stan/bin/stansummary $summaryParams *.csv \
+  stansummary $summaryParams *.csv \
     > "summary_${modelName}_${sampleID}.txt" && \
-    $stan/bin/diagnose *.csv \
+    diagnose *.csv \
     > "diagnostics_${modelName}_${sampleID}.txt"
   """
 }
